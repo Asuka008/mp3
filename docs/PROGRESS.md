@@ -2,10 +2,9 @@
 
 Last updated: October 30, 2026 (America/Chicago).
 
-Current status: all ten operations and the integration matrix pass. The Free
-Render service at https://asuka008-mp3.onrender.com is live and its public
-database-backed smoke check passed. Step 8 records the deployment. The official
-autograder and submission remain separate. Earlier records describe
+Current status: the Free Render API is live. The first official self-check scored
+90/100; successful DELETE status/body expectations are being corrected and verified
+in Step 9. The course form has not been submitted. Earlier records describe
 the preceding steps and their results at
 those times. Preserve these records for handoffs.
 
@@ -919,3 +918,56 @@ No paid resource, official autograder call, course-form submission, force push,
 shared database wipe, or unrelated change was performed. Free service cold starts
 and continued availability during grading remain operational obligations. The
 remaining course self-check/submission steps require separate authorization.
+
+## Step 9 — official self-check and DELETE response correction
+
+October 30, 2026, America/Chicago. The user explicitly authorized the official
+self-check, its temporary records, necessary fixes/commits/pushes/redeployment,
+and repeat grading after verified deployment. The final course form remains
+outside scope. Read applicable instruction locations (no AGENTS.md found),
+README Grading/Self-check, FAQ, current handoff/deployment, and submit.js.
+Git was clean at source **8dce84d309014733a1c1c17ca49947fab6d66d66**, origin
+Asuka008/mp3 main. Node v24.16.0 and npm 11.13.0 were verified. Comparing submit.js
+with the initial source proved that only API_URL differs; the unchanged grader
+URL and grading logic are preserved.
+
+Render's actual account UI showed that revision Live on the established service.
+Public root/users/tasks read preflight returned 200 with expected envelopes/data;
+an authenticated Atlas ping passed. Saved a private id-only inventory before
+grading: zero users and tasks. No warm-up timeout or functional preflight failure
+occurred, so grading targeted a ready, database-connected service.
+
+Ran **npm run submit** from 5:38:10 PM to 5:38:42 PM CDT (32.446 seconds). Actual
+score: **90/100, 18/20 points**. Eighteen items passed; only successful DELETE
+/tasks/:id and /users/:id failed because the grader expects status 204 and an
+empty body. Both subsequent deleted-resource GET checks passed. There were no
+skipped prerequisites, timeouts, or rate-limit responses. Exact timestamps and
+unmodified output are in GRADING.md. Post-grader inventory was again zero users
+and tasks; no manual cleanup of grader data was necessary.
+
+A focused public reproduction with two uniquely identified fixtures confirmed
+both routes returned 200 with 39 response bytes instead of 204/empty; both records
+were actually deleted and subsequent GET returned 404. It exited 1 as expected,
+and cleaned only those returned ids. Updated the permanent real HTTP/Atlas DELETE
+regression to assert status 204, empty text, and absent content type. Ran
+`MP3_ATLAS_TESTS=1 node --test test/delete-atlas.test.js` against the old handler:
+it failed in task deletion, as expected, and scoped fixture cleanup ran.
+
+Corrected routes/resources.js to await the existing atomic removal and then
+terminate with `res.status(204).end()`. Transactions, reference synchronization,
+404/500 errors, and other endpoints are unchanged. Updated delete-atlas and
+contract fixture clients plus the public smoke helper to verify this bodyless
+success without parsing JSON, retaining JSON-envelope assertions for errors and
+other operations. The contract deletion-race expectation is now 204. This is a
+generic correction for both resources, not a grader-example special case.
+
+README/FAQ do not fully prescribe a DELETE success status. The actual official
+feedback now clarifies 204; the earlier labeled 200/envelope project decision is
+superseded. API.md, REQUIREMENTS.md, TESTING.md, DEPLOYMENT.md, SOURCES.md, and
+GRADING.md reflect that distinction. `npm test` passed 36 checks (five database
+groups skipped by default). `npm run test:integration` passed all five groups,
+0 failed/0 skipped, in 136.450 seconds: 792 actual HTTP requests with bodyless
+DELETE, error envelopes, both references, rollback, and scoped cleanup verified.
+Syntax and git diff checks passed. The reviewed fix will now be pushed/redeployed;
+the next grader run must wait for its verified live revision. No unchanged-code
+repeat grading was sent.

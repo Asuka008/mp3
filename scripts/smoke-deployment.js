@@ -10,7 +10,7 @@ async function smokeDeployment(base) {
     const ids = { users: new Set(), tasks: new Set() };
     let requests = 0;
 
-    async function request(path, { method = 'GET', json, query = {}, expected = 200 } = {}) {
+    async function request(path, { method = 'GET', json, query = {}, expected = method === 'DELETE' ? 204 : 200 } = {}) {
         const url = new URL('/api' + path, target);
         for (const [key, value] of Object.entries(query)) url.searchParams.set(key, JSON.stringify(value));
         requests++;
@@ -20,8 +20,14 @@ async function smokeDeployment(base) {
             body: json === undefined ? undefined : JSON.stringify(json),
         });
         assert.equal(response.status, expected, `${method} ${path}: unexpected HTTP status`);
-        assert.match(response.headers.get('content-type') || '', /application\/json/, `${method} ${path}: expected JSON`);
         assert.equal(response.headers.get('access-control-allow-origin'), '*');
+        if (response.status === 204) {
+            assert.equal(method, 'DELETE');
+            assert.equal(await response.text(), '');
+            assert.equal(response.headers.get('content-type'), null);
+            return null;
+        }
+        assert.match(response.headers.get('content-type') || '', /application\/json/, `${method} ${path}: expected JSON`);
         const body = await response.json();
         assert.deepEqual(Object.keys(body).sort(), ['data', 'message']);
         assert.ok(typeof body.message === 'string' && body.message.length > 0);

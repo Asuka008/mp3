@@ -69,8 +69,15 @@ function createClient(base, fixtures) {
             }
             requests++;
             const response = await fetch(url, options);
-            assert.match(response.headers.get('content-type'), /application\/json/);
             assert.equal(response.headers.get('access-control-allow-origin'), '*');
+            if (method === 'DELETE' && response.ok) {
+                assert.equal(response.status, 204);
+                if (expected !== undefined) assert.equal(response.status, expected);
+                assert.equal(await response.text(), '');
+                assert.equal(response.headers.get('content-type'), null);
+                return { status: 204 };
+            }
+            assert.match(response.headers.get('content-type'), /application\/json/);
             const body = await response.json();
             assert.deepEqual(Object.keys(body).sort(), ['data', 'message']);
             assert.ok(typeof body.message === 'string' && body.message.length > 0);

@@ -12,7 +12,8 @@ The Free Render deployment and public smoke evidence are recorded in
 
 ### All ten operations
 
-All paths are relative to `/api`. Responses use the envelope described below.
+All paths are relative to `/api`. Responses use the envelope where a body is
+allowed; successful DELETE and OPTIONS return bodyless 204.
 
 - [x] `GET /users`: list users; `200`, including an empty list or count of `0`.
 - [x] `POST /users`: validate and create a user, synchronize supplied pending tasks;
@@ -165,8 +166,9 @@ precedence relative to a missing URL resource.
   smaller than the local integration matrix, not an official autograder result.
 - [x] Set only `API_URL` in `submit.js` to the deployed base URL (without `/api`);
   preserve `AUTOGRADER_URL` and grading logic.
-- [ ] Run `npm run submit` with Node 24 when separately authorized. It was
-  explicitly excluded from the deployment step and has not been run.
+- [x] Run the separately authorized `npm run submit` with Node 24. Actual scores,
+  feedback, revisions, and timestamps are in [GRADING.md](GRADING.md). This is a
+  self-check and does not submit the course form.
 - [ ] Wake a sleeping Render service before retrying timeouts. Respect the stated
   approximate autograder limit of 5 runs per 2 minutes; fix multiple issues between runs.
 - [ ] Inspect any test data left by failed cleanup; no prescribed initial data
@@ -217,9 +219,10 @@ percentage point. Exact autograder requests are not published.
   limit, or the tasks default limit. Ignore sort/select for the count result;
   validate applicable supplied query values first. The course does not fully
   specify how counting interacts with pagination.
-- [x] Use `200` with `data: null` and the message `"User deleted."` or
-  `"Task deleted."` for successful DELETE. The course does not prescribe one DELETE success status.
-  Use bodyless `204` where appropriate (currently OPTIONS).
+- [x] Use bodyless `204` for successful DELETE and OPTIONS. README/FAQ leave the
+  DELETE success status open, but the actual official self-check explicitly
+  expects 204 and an empty body. This supersedes the initial 200/envelope project
+  interpretation; errors retain their JSON envelope. See GRADING.md for evidence.
 - [x] Provide payload defaults for User `pendingTasks` to `[]` on POST as well as PUT. Set omitted
   Task `description` to `""` and `completed` to `false`; use the explicit course
   unassigned defaults. Derive an omitted assigned name from the assigned user.
@@ -384,9 +387,10 @@ other unrelated features belong in this step.
   matching that user's id to `""` / `"unassigned"`. It does not use pendingTasks
   as the only task list, so completed assignments are also cleared. Tasks,
   completion flags, dates, and all other business data are preserved.
-- The course documents still do not prescribe a single DELETE success status.
-  The implemented project choice is 200 with `data: null` and `User deleted.` or
-  `Task deleted.`. Subsequent single GET and repeated DELETE return 404; collection
+- The README/FAQ do not prescribe a single DELETE success status; actual official
+  grading feedback requires 204 with an empty body. Both handlers now terminate
+  without JSON after the transaction commits. The former 200/envelope choice is
+  superseded, not presented as a course requirement. Single GET/repeated DELETE return 404; collection
   filters for the deleted id still succeed with `[]` or count 0.
 - Unknown API paths use the existing JSON 404 middleware. Malformed JSON and
   recognized validation errors are safe 400s; unexpected errors are safe 500s.

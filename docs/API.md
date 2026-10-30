@@ -14,8 +14,8 @@ verification, deployment, and submission remain separate steps.
 | GET | `/api/tasks/:id` | Task object, HTTP 200 |
 | PUT | `/api/users/:id` | Replaced user, HTTP 200 |
 | PUT | `/api/tasks/:id` | Replaced task, HTTP 200 |
-| DELETE | `/api/users/:id` | Message and null data, HTTP 200 |
-| DELETE | `/api/tasks/:id` | Message and null data, HTTP 200 |
+| DELETE | `/api/users/:id` | Empty body, HTTP 204 |
+| DELETE | `/api/tasks/:id` | Empty body, HTTP 204 |
 
 Every response has `message` and `data`. Invalid input returns 400; a malformed or
 missing single-resource id returns 404. Collection filters with no matches return
@@ -146,14 +146,15 @@ keep their own email. Rejected replacements roll back all related writes.
 Replace these example ids with the intended resource ids:
 
 ```sh
-curl -sS --request DELETE 'http://localhost:3000/api/tasks/bbbbbbbbbbbbbbbbbbbbbbbb'
+curl -i --request DELETE 'http://localhost:3000/api/tasks/bbbbbbbbbbbbbbbbbbbbbbbb'
 
-curl -sS --request DELETE 'http://localhost:3000/api/users/aaaaaaaaaaaaaaaaaaaaaaaa'
+curl -i --request DELETE 'http://localhost:3000/api/users/aaaaaaaaaaaaaaaaaaaaaaaa'
 ```
 
-Success is 200 with `{"message":"Task deleted.","data":null}` or the corresponding
-`User deleted.` message. This is the documented project decision; the course does
-not name a single DELETE success code. Deleting a task also removes pending
+Success is **204 with no response body or JSON content type**, as required by
+the actual official self-check. The README/FAQ did not name one success code;
+this feedback supersedes the earlier 200/envelope project choice (see GRADING.md).
+Deleting a task also removes pending
 membership. Deleting a user preserves their tasks, including completed ones,
 and clears only assignedUser/assignedUserName to the unassigned defaults.
 Deletion and reference changes commit atomically. Another user's unrelated tasks

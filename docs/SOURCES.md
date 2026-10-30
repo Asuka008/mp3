@@ -123,6 +123,13 @@ The Render deployment step consulted the following official sources (October 30,
 
 ## LLM assistance
 
+The official self-check step consulted the unchanged course grader through
+`npm run submit`, alongside README/FAQ and the actual Render source/status. Its
+score and verbatim feedback are preserved in GRADING.md. In particular, the
+official DELETE feedback requires an empty 204 success response, superseding
+the previously documented project choice where README/FAQ were silent. No
+additional tutorials or external implementation code were consulted.
+
 OpenAI Codex was used in this chat to inspect the starter, implement the foundation,
 write the checklist/handoff/setup documents, configure Atlas with user participation,
 implement/test connection-aware startup, and build/test models, validation,
@@ -139,6 +146,9 @@ service and private Atlas environment, inspected build/runtime logs, verified th
 public API with isolated fixtures, and set only the submission helper's API_URL.
 The initial login blocker and resumed successful deployment are recorded in
 DEPLOYMENT.md and PROGRESS.md. No official autograder or course form was run.
+The later, explicitly authorized self-check step runs the official client,
+records feedback, corrects successful DELETE transport semantics, and verifies
+the deployed correction. This does not submit the assignment through the form.
 Preserve and
 submit this chatlog with the source, and answer the course's LLM survey questions
 as required by README.md. This entry does not replace the required chatlog.

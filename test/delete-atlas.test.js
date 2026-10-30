@@ -31,8 +31,14 @@ test('Atlas HTTP DELETE cascades, rollback, and common HTTP behavior', {
         }
         requests++;
         const response = await fetch(url, options);
-        assert.match(response.headers.get('content-type'), /application\/json/);
         assert.equal(response.headers.get('access-control-allow-origin'), '*');
+        if (method === 'DELETE' && response.ok) {
+            assert.equal(response.status, 204, 'Successful DELETE must return 204');
+            assert.equal(await response.text(), '', 'Successful DELETE must have no body');
+            assert.equal(response.headers.get('content-type'), null);
+            return { status: 204 };
+        }
+        assert.match(response.headers.get('content-type'), /application\/json/);
         const body = await response.json();
         assert.equal(typeof body.message, 'string');
         assert.ok(Object.hasOwn(body, 'data'));
@@ -95,7 +101,7 @@ test('Atlas HTTP DELETE cascades, rollback, and common HTTP behavior', {
 
     async function remove(path, id) {
         const response = await request(`/${path}/${id}`, { method: 'DELETE' });
-        assert.deepEqual(response, { status: 200, message: path === 'users' ? 'User deleted.' : 'Task deleted.', data: null });
+        assert.deepEqual(response, { status: 204 });
         (path === 'users' ? activeUsers : activeTasks).delete(id);
         await absent(path, id);
         await inspectBothSides();

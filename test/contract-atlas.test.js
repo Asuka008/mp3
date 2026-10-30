@@ -142,7 +142,7 @@ test('assignment contract matrix over real HTTP and persisted fixture snapshots'
 
         stage = 'concurrent completed creation and owner deletion';
         const deletionRace = await Promise.all([
-            client.request(`/users/${b._id}`, { method: 'DELETE', expected: 200 }),
+            client.request(`/users/${b._id}`, { method: 'DELETE', expected: 204 }),
             client.request('/tasks', { method: 'POST', json: fixtures.task('delete-race', { assignedUser: b._id, completed: true }) }),
         ]);
         assert.ok([201, 404].includes(deletionRace[1].status));

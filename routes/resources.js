@@ -23,8 +23,9 @@ module.exports = function (router) {
             sendResponse(res, 200, `${Model.modelName} updated.`, data);
         });
         router.delete(`/${path}/:id`, async (req, res) => {
-            const data = await remove(req.params.id);
-            sendResponse(res, 200, `${Model.modelName} deleted.`, data);
+            await remove(req.params.id);
+            // The official self-check requires a bodyless 204 after the transaction commits.
+            res.status(204).end();
         });
     }
     return router;

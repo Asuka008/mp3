@@ -8,7 +8,8 @@ API root: https://asuka008-mp3.onrender.com/api
 
 The service uses the assignment's MongoDB Atlas database. Public verification
 passed 38 HTTPS requests, including database writes, reference synchronization,
-deletion, and fixture cleanup. No official autograder or course form was run.
+deletion, and fixture cleanup. Subsequent official self-check results and any
+corrections are recorded in [GRADING.md](GRADING.md). No course form was submitted.
 
 The reviewed backend and deployment preparation were committed and pushed to
 `Asuka008/mp3` on `main` as
@@ -90,7 +91,8 @@ Render-origin connectivity. The existing course IP access rule was not changed.
    `/api` or another path; preserve AUTOGRADER_URL and grading logic.
 6. Commit/push that configuration and final deployment evidence. Verify the final
    deployed revision is live and repeat the public smoke check if redeployed.
-   Do not run the course autograder or submit the course form in this step.
+   Run the official self-check only when separately authorized, as recorded in
+   GRADING.md. It does not submit the course form.
 
 ## Public verification
 
@@ -136,16 +138,17 @@ MP3-SMOKE fixtures; report that explicitly rather than claiming a clean pass.
   are additional checks and are not included in that total.
 
 The local regression evidence is in PROGRESS.md and TESTING.md. Public smoke
-coverage is smaller than the 792-request local/Atlas matrix and is not a claim
-that the undisclosed deployed course autograder passed.
+coverage is smaller than the 792-request local/Atlas matrix. The actual official
+score, feedback, and graded source revision are recorded separately in GRADING.md.
 
 Local preflight on October 30, 2026: `npm ci` succeeded with zero reported
 vulnerabilities; `npm test` passed 36 checks (five opt-in database groups skipped);
 `npm run test:integration` passed all five groups, including 792 real HTTP requests
 and verified fixture cleanup. All 35 JavaScript files passed syntax checks.
 Compatible lockfile updates changed only body-parser 2.3.0 to 2.4.0 and qs 6.16.0
-to 6.17.1; Express remains 5.3.0 and Mongoose remains 9.11.1. No paid service or
-official autograder run has occurred.
+to 6.17.1; Express remains 5.3.0 and Mongoose remains 9.11.1. No paid service was
+provisioned. The deployment step itself did not run the official grader; the
+separately authorized self-check and DELETE 204 clarification are in GRADING.md.
 
 Free services can sleep after 15 idle minutes and may take about a minute to wake.
 Atlas stores the data independently of Render's ephemeral filesystem. No paid

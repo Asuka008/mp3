@@ -124,9 +124,10 @@ writes execute against Atlas. Normal success paths use real Mongoose methods.
 ## Requirements versus choices
 
 Count-before-pagination, numeric nonnegative pagination, exact-case email storage,
-form normalization, URL-first single-GET precedence, and DELETE 200 with null data
-are documented project choices where applicable. They are not presented as extra
-course rules. OPTIONS is bodyless 204. The README/FAQ mixed missing/completed-task
+form normalization, and URL-first single-GET precedence are documented project
+choices where applicable. Successful DELETE is bodyless 204 after the official
+self-check clarified this previously unspecified detail; the old 200/envelope
+choice is superseded. OPTIONS is also bodyless 204. The README/FAQ mixed missing/completed-task
 precedence ambiguity remains documented in REQUIREMENTS.md.
 
 The wider matrix found two implementation defects: invalid regex options were
