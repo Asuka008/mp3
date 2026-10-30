@@ -1,11 +1,9 @@
+const sendResponse = require('../utils/response');
+
 module.exports = function (router) {
-
-    var homeRoute = router.route('/');
-
-    homeRoute.get(function (req, res) {
-        var connectionString = process.env.TOKEN;
-        res.json({ message: 'My connection string is ' + connectionString });
+    router.get('/', (req, res) => {
+        sendResponse(res, 200, 'MP3 API foundation is running.');
     });
 
     return router;
-}
+};

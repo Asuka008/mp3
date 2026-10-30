@@ -1,36 +1,84 @@
-// Get the packages we need
-var express = require('express'),
-    router = express.Router(),
-    mongoose = require('mongoose');
+const { once } = require('node:events');
+const mongoose = require('mongoose');
+const app = require('./app');
+const { initializeModels } = require('./models');
 
-// Read .env file
-require('dotenv').config();
+function configurationError(value) {
+    if (!value || !value.trim()) {
+        return 'Startup failed: MONGODB_URI is missing. Set it privately in .env or the process environment.';
+    }
+    if (/[<>\s]/.test(value)) {
+        return 'Startup failed: MONGODB_URI contains placeholders or unencoded whitespace. Complete the Atlas URI in .env.';
+    }
 
-// Create our Express application
-var app = express();
+    try {
+        const uri = new URL(value);
+        // This project uses the default Atlas SRV connection string, not a local database.
+        if (uri.protocol !== 'mongodb+srv:' || !uri.hostname.endsWith('.mongodb.net') || uri.hash) {
+            return 'Startup failed: use the Atlas mongodb+srv connection string from Connect > Drivers.';
+        }
+        if (!uri.username || !uri.password) {
+            return 'Startup failed: the Atlas URI needs database-user credentials. Enter them privately in .env.';
+        }
+        decodeURIComponent(uri.username);
+        if (decodeURIComponent(uri.password) === 'REPLACE_WITH_DATABASE_PASSWORD') {
+            return 'Startup failed: the Atlas database password is not configured. Run npm run configure:atlas privately.';
+        }
+        const database = decodeURIComponent(uri.pathname.slice(1));
+        if (!database || database.includes('/') || ['admin', 'config', 'local'].includes(database)) {
+            return 'Startup failed: select an assignment database such as /mp3 before the URI query string.';
+        }
+    } catch {
+        return 'Startup failed: MONGODB_URI is invalid. Check the Atlas URI and percent-encoded credentials privately.';
+    }
+    return null;
+}
 
-// Use environment defined port or 3000
-var port = process.env.PORT || 3000;
+async function start() {
+    let server;
+    let failureMessage = 'Startup failed: could not load server configuration.';
 
-// Connect to a MongoDB --> Uncomment this once you have a connection string!!
-//mongoose.connect(process.env.MONGODB_URI).catch(function (err) { console.error('MongoDB connection error:', err.message); });
+    try {
+        // Existing process variables take precedence over the local ignored file.
+        require('dotenv').config({ quiet: true });
+        const problem = configurationError(process.env.MONGODB_URI);
+        if (problem) {
+            failureMessage = problem;
+            throw new Error();
+        }
 
-// Allow CORS so that backend and frontend could be put on different servers
-var allowCrossDomain = function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept");
-    res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
-    next();
-};
-app.use(allowCrossDomain);
+        // Never log raw driver errors, which can include connection details.
+        mongoose.connection.on('error', () => {
+            console.error('Database connection error. Check Atlas connectivity and database-user access.');
+        });
+        failureMessage = 'Startup failed: could not connect to MongoDB Atlas. Check database-user credentials, cluster status, and the IP access list.';
+        await mongoose.connect(process.env.MONGODB_URI, { serverSelectionTimeoutMS: 10000 });
 
-// Parse URL-encoded and JSON request bodies
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+        failureMessage = 'Startup failed: the MongoDB Atlas database ping failed. Check Atlas connectivity and database-user access.';
+        const ping = await mongoose.connection.db.command({ ping: 1 });
+        if (ping.ok !== 1) throw new Error();
 
-// Use routes as a module (see index.js)
-require('./routes')(app, router);
+        failureMessage = 'Startup failed: database indexes could not be initialized. Check database access and existing email conflicts; no records were removed.';
+        await initializeModels();
 
-// Start the server
-app.listen(port);
-console.log('Server running on port ' + port);
+        failureMessage = 'Startup failed: could not open the HTTP port. Check PORT and whether another server is using it.';
+        server = app.listen(process.env.PORT || 3000);
+        await once(server, 'listening');
+        console.log(`Server ready on port ${server.address().port}; MongoDB Atlas connected and database ping verified.`);
+        return server;
+    } catch {
+        if (server && server.listening) server.close();
+        await mongoose.disconnect().catch(() => {});
+        // Throw only a message authored here; never pass through the original error.
+        throw new Error(failureMessage);
+    }
+}
+
+if (require.main === module) {
+    start().catch((error) => {
+        console.error(error.message);
+        process.exitCode = 1;
+    });
+}
+
+module.exports = { start };
