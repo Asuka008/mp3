@@ -138,4 +138,5 @@ deliberately, rather than deleting data or dropping the unique index automatical
 See [API.md](API.md) for all implemented operations and encoded HTTP examples,
 and [DEPLOYMENT.md](DEPLOYMENT.md) for the reviewed Render settings and status.
 The local HTTP/Atlas integration matrix is documented in TESTING.md and
-PROGRESS.md. Deployment, deployed verification, and submission remain separate.
+PROGRESS.md. The Free Render service and public smoke verification are recorded
+in DEPLOYMENT.md. The official course self-check and submission remain separate.

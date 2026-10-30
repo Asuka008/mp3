@@ -2,9 +2,10 @@
 
 Last updated: October 30, 2026 (America/Chicago).
 
-Current status: all ten operations and the integration matrix pass. Step 8 below
-records deployment preparation; Render sign-in is required before a public
-service can be created/verified. Submission remains separate. Earlier records describe
+Current status: all ten operations and the integration matrix pass. The Free
+Render service at https://asuka008-mp3.onrender.com is live and its public
+database-backed smoke check passed. Step 8 records the deployment. The official
+autograder and submission remain separate. Earlier records describe
 the preceding steps and their results at
 those times. Preserve these records for handoffs.
 
@@ -771,7 +772,10 @@ actual submission remain unverified. The project is not claimed deployment-ready
 No deployment, submission, commit, or unrelated feature was performed. The next
 step is the separately authorized deployment/deployed-verification work.
 
-## Step 8 — deployment preparation; Render login required
+## Step 8 — Render deployment
+
+The initial preparation/login handoff below is preserved as history. The resumed
+deployment results follow it; the earlier account-access blocker is resolved.
 
 October 30, 2026. Read current README/FAQ, requirements/progress/setup/testing
 documents, runtime/environment files, implementation, Git state/remotes/history,
@@ -837,7 +841,7 @@ include connection/ping/indexes and transactional read/write permissions. The
 previously configured course-required `0.0.0.0/0` rule and assignment-scoped user
 were not changed. Render-origin connectivity remains unverified until deployment.
 
-### Exact external prerequisite and remaining work
+### Initial account-access handoff (resolved by the continuation below)
 
 Opened the actual Render dashboard in the in-app browser; it shows Sign In to
 Render. Requested only that the user sign in (or create a free account) privately
@@ -853,3 +857,65 @@ deployment logs, wait for Live, run the public smoke script, update only API_URL
 in submit.js to the verified base URL, commit/push, and verify the final deployed
 revision. DEPLOYMENT.md gives exact UI fallback steps. Do not run the official
 autograder or submit the course form during this step.
+
+### Resumed deployment after account access
+
+The user signed into Render in Edge, approved installing Render's GitHub app for
+**only Asuka008/mp3**, and privately completed GitHub re-authentication. No other
+owned repository received installation access. The original in-app login tab was
+not the authenticated session; the existing Edge Render tab was used.
+
+Created Node web service **asuka008-mp3** (`srv-dbihj2l9fdbs73dmgjqg`) in Oregon
+(US West), from Asuka008/mp3 **main** at revision `28d86f6`. Changed the creation
+form's initial paid default to **Free ($0/month, 0.1 CPU, 512 MB)** before deploying.
+Root directory is empty/repository root, build `npm ci`, start `npm start`, health
+path `/api`, auto-deploy enabled. Set non-secret NODE_VERSION to **24.16.0** and
+transferred only MONGODB_URI from the ignored local file into Render's private
+environment field. The URI was hidden, and all state inspection around entry
+redacted its value; no credential was printed or captured in screenshots. TOKEN,
+test configuration, and custom PORT were not sent. Local env entries were preserved.
+
+| Actual provider/public check | Result |
+| --- | --- |
+| Atlas connection-status role inspection and ping | Assignment database mp3 and its readWrite role confirmed; ping succeeded; no credentials displayed |
+| Initial deploy `dep-dbihj2t9fdbs73dmgkdg` | Source 28d86f6 from main, completed in 47.7 seconds, **Deploy succeeded / Live** |
+| Render build logs | Node 24.16.0 via NODE_VERSION; npm ci; zero reported vulnerabilities; successful build |
+| Render runtime logs | npm start / node server.js; listening on supplied port 10000 only after Atlas connection, ping, and indexes |
+| Public HTTPS `/api` fetch | HTTP 200, application/json, static message/data envelope, no environment values |
+| `node scripts/smoke-deployment.js https://asuka008-mp3.onrender.com` | Exit 0; **38 HTTPS requests passed**, including persistence, both reference directions, dates, replacement, queries, rejection, deletion, OPTIONS, and verified cleanup |
+| Public fixture scope | Two uniquely marked users and pending/completed tasks; only run-owned ids/UUID matches cleaned; final matching counts zero |
+
+The actual public URL is **https://asuka008-mp3.onrender.com**. This proves
+Render-origin Atlas read/write/transaction access in addition to the earlier local
+regressions. The course-required IP access configuration and assignment database
+user were left unchanged. No provider/startup failure needed repair.
+
+Only the API_URL declaration in submit.js changes to the verified base URL, without
+/api or other paths. The grader URL and all grading logic are preserved; the file
+is syntax-checked/read as text, never executed in this step. DEPLOYMENT.md now
+records the actual URL/service/settings and public evidence; REQUIREMENTS.md and
+SOURCES.md reflect completed deployment and the actual account UI consulted.
+Committed only submit.js as **9e4bd3b8e97df4db31a3fdcf7a66c0d28aeeb2fe** with
+`git commit -m "Set verified Render API base URL"`, then ran `git push origin main`.
+Remote main matched that commit. Render auto-deployed it as
+`dep-dbihl8fb9u1s738iq3i0`, confirmed the intended source/Node/build/startup and
+Atlas readiness, then reported **Live after 53.9 seconds**. Reran
+`node scripts/smoke-deployment.js https://asuka008-mp3.onrender.com`: exit 0 and
+**38 requests passed again with zero remaining fixtures**. Across initial and
+configuration revisions, 76 public workflow requests passed, plus standalone
+root checks. No business-code changes were needed, so the fresh 36 local checks
+and five Atlas groups/792 requests remain the regression evidence; public smoke
+is deliberately smaller than that matrix.
+
+Final read-only checks confirmed that only API_URL differs in submit.js from the
+starter, grading logic is preserved, no real local URI/password appears in changed
+files, and git diff --check passes. This documentation-only record is published
+on the same main branch; its auto-deployed revision is checked through Render and
+the public root/database reads before the final response. The authoritative latest
+revision is visible in Render's Deploys view and GitHub main, avoiding a self-hash
+inside the commit's own documentation.
+
+No paid resource, official autograder call, course-form submission, force push,
+shared database wipe, or unrelated change was performed. Free service cold starts
+and continued availability during grading remain operational obligations. The
+remaining course self-check/submission steps require separate authorization.

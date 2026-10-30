@@ -1,14 +1,26 @@
 # Render deployment
 
-Status: local preparation and regression checks are complete. No public service
-or URL has been verified yet. Render account sign-in is required before provider configuration.
-Do not treat the placeholder in submit.js as a deployment.
+Status: **Live and verified** on October 30, 2026.
+
+Public base URL: **https://asuka008-mp3.onrender.com**
+
+API root: https://asuka008-mp3.onrender.com/api
+
+The service uses the assignment's MongoDB Atlas database. Public verification
+passed 38 HTTPS requests, including database writes, reference synchronization,
+deletion, and fixture cleanup. No official autograder or course form was run.
 
 The reviewed backend and deployment preparation were committed and pushed to
 `Asuka008/mp3` on `main` as
 [`77abe2f`](https://github.com/Asuka008/mp3/commit/77abe2fa832022996e32c43f5218177c47310809).
-Remote main matched the local commit after the normal push. Documentation-only
-follow-up commits may follow; Render should deploy the latest main revision.
+Remote main matched local history after normal pushes. Initial Render deployment
+`dep-dbihj2t9fdbs73dmgkdg` built revision `28d86f6` from main. Render automatically
+deploys subsequent main pushes, including the verified base URL in submit.js.
+API_URL commit [`9e4bd3b`](https://github.com/Asuka008/mp3/commit/9e4bd3b8e97df4db31a3fdcf7a66c0d28aeeb2fe)
+was auto-deployed successfully as `dep-dbihl8fb9u1s738iq3i0`; its public smoke
+also passed 38 requests after Render reported Live. The final documentation-only
+push uses the same backend/configuration and is checked for a healthy deployment
+before the final handoff. Render's Deploys page identifies the latest main revision.
 
 ## Reviewed destination and service settings
 
@@ -16,12 +28,14 @@ follow-up commits may follow; Render should deploy the latest main revision.
 | --- | --- |
 | GitHub repository | https://github.com/Asuka008/mp3 |
 | Branch | `main` |
+| Service name / ID | `asuka008-mp3` / `srv-dbihj2l9fdbs73dmgjqg` |
+| Region | Oregon (US West) |
 | Service type / runtime | Web Service / Node |
 | Instance | Free; do not select a paid instance, database, or disk |
 | Root directory | Leave empty: package.json and server.js are at repository root |
 | Build command | `npm ci` |
 | Start command | `npm start` |
-| Node setting | `.node-version` pins `24.16.0`; set Render `NODE_VERSION=24.16.0` as well if supplying an override |
+| Node setting | `.node-version` pins `24.16.0`; Render `NODE_VERSION=24.16.0` is configured and confirmed in build logs |
 | Additional constraints | `.nvmrc` is `24`; package/lockfile engines are `24.x` |
 | Health check path | `/api` |
 | Port | Use Render's supplied `PORT`; do not set a custom port |
@@ -31,13 +45,18 @@ repository contains this MP3 assignment and its initial commit matches the local
 history. GitHub push authentication was checked with a dry run. Never push to the
 course template URL retained as starter package metadata.
 
+The user approved installing Render's GitHub app for **only Asuka008/mp3** and
+completed GitHub's private re-authentication. No other owned repository received
+installation access. The provider's default paid compute choice was changed to
+Free before creation; no paid instance was deployed.
+
 ## Private configuration
 
-Set only the required secret `MONGODB_URI` in the service's Environment fields,
-using the existing ignored local `.env` value privately. It must select the
-assignment database, use the assignment database user, and preserve percent
-encoding of credentials. Never paste the real value into chat, this document,
-commands, screenshots, source files, or build logs.
+The required secret `MONGODB_URI` was transferred from the existing ignored local
+`.env` directly into Render's Environment field, then hidden. It selects the
+assignment database and user, preserving percent encoding. No real value appears
+in chat, this document, commands, screenshots, source files, or build logs. The
+original local environment entries and starter TOKEN were preserved.
 
 `NODE_VERSION` is non-secret. No `TOKEN`, test connection, authentication key, or
 manually assigned `PORT` is needed by the backend. `.env.test` is for opt-in local
@@ -49,8 +68,11 @@ assignment database user's read/write/index privileges. No network rule or
 database permission is changed by deploying. Startup awaits connection, a ping,
 and required indexes before listening; it reports sanitized failure messages.
 A root response alone is not proof of database-backed API behavior.
+An authenticated Atlas connection-status check verified the assignment-scoped
+readWrite role and ping. The public read/write/transaction workflow also verifies
+Render-origin connectivity. The existing course IP access rule was not changed.
 
-## Provider steps if account access is unavailable
+## Reproducing the provider configuration
 
 1. Sign in to https://dashboard.render.com using your own account. If account
    creation requires terms or verification, complete that step yourself.
@@ -72,10 +94,10 @@ A root response alone is not proof of database-backed API behavior.
 
 ## Public verification
 
-After the actual URL is known, run:
+Run against this assignment's service:
 
 ```sh
-node scripts/smoke-deployment.js https://<your-service>.onrender.com
+node scripts/smoke-deployment.js https://asuka008-mp3.onrender.com
 ```
 
 The script accepts only a Render HTTPS base URL. It exercises root/database reads,
@@ -88,17 +110,42 @@ remaining fixture counts checked. It never clears a database or touches unrelate
 records. Network failure/forced termination during cleanup can leave identifiable
 MP3-SMOKE fixtures; report that explicitly rather than claiming a clean pass.
 
-Public URL, deployed revision, runtime/build evidence, and actual smoke results
-will be recorded here after verification. The local regression evidence is in
-PROGRESS.md and TESTING.md; it does not imply a public deployment exists.
+### Actual public evidence
+
+- Initial Render logs identify Asuka008/mp3 main at `28d86f6`, Node **24.16.0 via
+  NODE_VERSION**, successful `npm ci` with zero reported vulnerabilities, and
+  `npm start` / `node server.js`.
+- Runtime logged `Server ready on port 10000; MongoDB Atlas connected and database
+  ping verified.` Render reported **Deploy succeeded | Live** after 47.7 seconds,
+  with a successful `/api` health check. No startup repair was needed.
+- A real public root request returned HTTP 200, JSON content type, and the static
+  message/data envelope without environment values.
+- The smoke command exited 0: **38 HTTPS requests passed**. Two users and pending/
+  completed tasks exercised creation, user renaming, both task owner names, task
+  transfer, both users' membership, combined query/projection/count, mismatched-name
+  rejection with unchanged task state, user deletion/unassignment, task deletion,
+  subsequent/repeated 404s, and bodyless OPTIONS. Cleanup verified zero remaining
+  run-owned users/tasks. No unrelated records were targeted.
+- Only `API_URL` in submit.js changed to the verified base URL, without `/api`.
+  AUTOGRADER_URL and grading logic remain unchanged. Do not execute submit.js just
+  to inspect this setting: its entry point invokes the official grader.
+- The API_URL auto-deployment (`9e4bd3b`) again confirmed Node 24.16.0, successful
+  locked install/startup, Atlas-ready port 10000, and Live after 53.9 seconds.
+  The same smoke command passed **38 requests again**, including cleanup, for
+  76 workflow requests across the two verified revisions. Standalone root reads
+  are additional checks and are not included in that total.
+
+The local regression evidence is in PROGRESS.md and TESTING.md. Public smoke
+coverage is smaller than the 792-request local/Atlas matrix and is not a claim
+that the undisclosed deployed course autograder passed.
 
 Local preflight on October 30, 2026: `npm ci` succeeded with zero reported
 vulnerabilities; `npm test` passed 36 checks (five opt-in database groups skipped);
 `npm run test:integration` passed all five groups, including 792 real HTTP requests
 and verified fixture cleanup. All 35 JavaScript files passed syntax checks.
 Compatible lockfile updates changed only body-parser 2.3.0 to 2.4.0 and qs 6.16.0
-to 6.17.1; Express remains 5.3.0 and Mongoose remains 9.11.1. No paid service,
-public smoke run, or official autograder run has occurred.
+to 6.17.1; Express remains 5.3.0 and Mongoose remains 9.11.1. No paid service or
+official autograder run has occurred.
 
 Free services can sleep after 15 idle minutes and may take about a minute to wake.
 Atlas stores the data independently of Render's ephemeral filesystem. No paid

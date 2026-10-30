@@ -114,9 +114,12 @@ The Render deployment step consulted the following official sources (October 30,
 - [qs maintainer advisory](https://github.com/ljharb/qs/security/advisories/GHSA-6pq8-jhm2-2vcw):
   affected stringify behavior and patched releases; compatible dependency updates
   were checked rather than applying unrelated major-version upgrades.
-- Actual public GitHub repository page and Render account login screen: verified
-  assignment destination/history and the provider sign-in prerequisite. No account
-  credentials or connection strings are reproduced here.
+- Actual public GitHub repository and signed-in GitHub/Render UI: verified personal
+  assignment ownership, approved single-repository app installation, Node service
+  settings, Free compute selection, private environment configuration, successful
+  deploy/build/runtime logs, public URL, and source revision. No account credentials
+  or connection strings are reproduced here. Real public API smoke responses were
+  consulted as verification evidence, alongside Atlas connection-status/ping.
 
 ## LLM assistance
 
@@ -131,10 +134,11 @@ The integration-suite step added explicit test-environment isolation, shared
 fixture invariants, a broader real HTTP/Atlas contract matrix, observed-write
 rollback and concurrency checks, and fixes for regex-error mapping and a
 completed-task/owner-change race.
-The deployment step reviews/publishes the assignment changes, prepares free Render
-settings and private configuration instructions, and adds a public API smoke
-workflow. Deployment status and any account-access blocker are recorded separately
-in DEPLOYMENT.md and PROGRESS.md; preparation alone is not a live deployment.
+The deployment step reviewed/published the assignment, configured the Free Render
+service and private Atlas environment, inspected build/runtime logs, verified the
+public API with isolated fixtures, and set only the submission helper's API_URL.
+The initial login blocker and resumed successful deployment are recorded in
+DEPLOYMENT.md and PROGRESS.md. No official autograder or course form was run.
 Preserve and
 submit this chatlog with the source, and answer the course's LLM survey questions
 as required by README.md. This entry does not replace the required chatlog.

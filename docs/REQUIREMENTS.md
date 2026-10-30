@@ -5,7 +5,8 @@ Unchecked boxes are future work, not claims of implemented behavior. Model and
 helper checks below describe the foundation. All ten assignment operations are
 implemented. The repeatable local HTTP/Atlas integration matrix and its actual
 results are recorded in [TESTING.md](TESTING.md) and [PROGRESS.md](PROGRESS.md).
-Deployment, deployed verification, and submission remain separate work.
+The Free Render deployment and public smoke evidence are recorded in
+[DEPLOYMENT.md](DEPLOYMENT.md). The official self-check and submission remain separate.
 
 ## Explicit course requirements
 
@@ -151,17 +152,21 @@ precedence relative to a missing URL resource.
   if absent, and leave the template's TOKEN convention intact.
 - [x] Configure real database credentials privately and connect to MongoDB Atlas;
   enable the assignment's requested "Allow access from anywhere" cluster setting.
-- [ ] Deploy the API publicly on Render using Node 24.x (`engines.node: "24.x"`;
+- [x] Deploy the API publicly on Render using Node 24.x (`engines.node: "24.x"`;
   use `NODE_VERSION=24.16.0` if setting a Render runtime override). Use `npm ci` for
   installation and `npm start` for startup, with private environment variables.
   Verify the selected runtime in deployment logs. These commands/settings are
   project deployment choices; Atlas and Render are course requirements.
-  Local preparation, free-tier settings, and the account-access prerequisite are
-  recorded in [DEPLOYMENT.md](DEPLOYMENT.md); a live URL is not yet verified.
-- [ ] Verify deployed business endpoints and database writes, query combinations,
+  Free service https://asuka008-mp3.onrender.com is live; logs confirm Node 24.16.0,
+  locked install, startup, and Atlas ping. See [DEPLOYMENT.md](DEPLOYMENT.md).
+- [x] Verify deployed business endpoints and database writes, query combinations,
   missing resources, replacement behavior, validation, and reference consistency.
-- [ ] Set only `API_URL` in `submit.js` to the deployed base URL (without `/api`);
-  preserve `AUTOGRADER_URL`. Run `npm run submit` with Node 24 after deployment.
+  Public smoke: 38 HTTPS requests passed with run-owned fixture cleanup. This is
+  smaller than the local integration matrix, not an official autograder result.
+- [x] Set only `API_URL` in `submit.js` to the deployed base URL (without `/api`);
+  preserve `AUTOGRADER_URL` and grading logic.
+- [ ] Run `npm run submit` with Node 24 when separately authorized. It was
+  explicitly excluded from the deployment step and has not been run.
 - [ ] Wake a sleeping Render service before retrying timeouts. Respect the stated
   approximate autograder limit of 5 runs per 2 minutes; fix multiple issues between runs.
 - [ ] Inspect any test data left by failed cleanup; no prescribed initial data

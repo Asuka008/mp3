@@ -141,3 +141,7 @@ not verify Render hosting, the undisclosed deployed autograder, every MongoDB qu
 feature, or an exhaustive concurrency/load schedule. No deployment-ready claim is
 made. Use API.md's existing curl examples for manual learning; the automated suite
 is the primary regression source rather than a duplicated Postman matrix.
+
+The separate public Render smoke command and its results are in
+[DEPLOYMENT.md](DEPLOYMENT.md). It uses only disposable UUID fixtures and does
+not invoke the official course autograder.
