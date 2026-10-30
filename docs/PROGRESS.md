@@ -2,9 +2,10 @@
 
 Last updated: October 30, 2026 (America/Chicago).
 
-Current status: the Free Render API is live. The first official self-check scored
-90/100; successful DELETE status/body expectations are being corrected and verified
-in Step 9. The course form has not been submitted. Earlier records describe
+Current status: https://asuka008-mp3.onrender.com is live. The official self-check
+reports **100/100 (20/20 points), all 19 checks passed**, on the verified DELETE
+correction in Step 9. Exact output/timestamps are in GRADING.md. The course form
+has not been submitted. Earlier records describe
 the preceding steps and their results at
 those times. Preserve these records for handoffs.
 
@@ -938,7 +939,7 @@ grading: zero users and tasks. No warm-up timeout or functional preflight failur
 occurred, so grading targeted a ready, database-connected service.
 
 Ran **npm run submit** from 5:38:10 PM to 5:38:42 PM CDT (32.446 seconds). Actual
-score: **90/100, 18/20 points**. Eighteen items passed; only successful DELETE
+score: **90/100, 18/20 points**. Seventeen checks passed; only successful DELETE
 /tasks/:id and /users/:id failed because the grader expects status 204 and an
 empty body. Both subsequent deleted-resource GET checks passed. There were no
 skipped prerequisites, timeouts, or rate-limit responses. Exact timestamps and
@@ -971,3 +972,44 @@ DELETE, error envelopes, both references, rollback, and scoped cleanup verified.
 Syntax and git diff checks passed. The reviewed fix will now be pushed/redeployed;
 the next grader run must wait for its verified live revision. No unchanged-code
 repeat grading was sent.
+
+### Verified corrected deployment and final score
+
+Committed/pushed the reviewed correction, test updates, and first-run record as
+**b13fb955a2d0b000cc917df6c99b508725f8b041** with
+`git commit -m "Return bodyless 204 for successful DELETE per official self-check"`
+and `git push origin main`. Remote main matched local. Render auto-deployment
+**dep-dbihr5uc6qcc73b3vk2g** identified that exact source, Node 24.16.0, successful
+npm ci with zero reported vulnerabilities, npm start, and Atlas-ready port 10000.
+The actual UI reported **Deploy succeeded / Live after 37.4 seconds**.
+
+Ran `node scripts/smoke-deployment.js https://asuka008-mp3.onrender.com` against
+that live revision: **38 HTTPS requests passed**, including both empty 204 DELETE
+responses, reference synchronization, persistence, errors, and fixture cleanup.
+No stale-deployment grading occurred. A new private read-only pre-run inventory
+again found zero users and tasks.
+
+Ran **npm run submit** a second time from **5:45:24 PM to 5:45:33 PM CDT**
+(2026-10-30T22:45:24.060Z to 2026-10-30T22:45:33.924Z, 9.864 seconds).
+Actual final score: **100/100 (20/20 points), all 19 checks passed**. Both DELETE
+success checks and both post-delete GET checks now pass. No timeout, rate limit,
+skipped/partial item, or unresolved failure remains. The two run starts were
+434.005 seconds apart, within the documented approximate five-per-two-minutes
+limit. GRADING.md contains both complete client transcripts and exact timestamps.
+
+Post-run id inventories matched the empty baseline: zero users, zero tasks, no
+added ids, and no missing prior ids. No manual grader cleanup was necessary.
+No unrelated data was removed, no database/collection was cleared, and no
+connection secret was printed or committed. submit.js is unchanged from the
+pre-step client, including AUTOGRADER_URL and grading logic.
+
+Only documentation is updated after the passing run. Its final commit preserves
+the graded non-documentation tree (fingerprint recorded in GRADING.md) and is
+checked for a healthy Render deployment before handoff. No new implementation
+change calls for another grading run. Exact local checks were npm test (36 pass,
+five integration skips), npm run test:integration (five pass, 792 HTTP requests),
+node syntax checks, git diff --check, secret scans, and remote/source comparisons.
+
+`npm run submit` is a **self-check only**. The final course form was not submitted;
+chatlog/survey/source obligations and keeping the service available remain course
+submission responsibilities. No further implementation failure is outstanding.

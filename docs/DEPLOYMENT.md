@@ -10,6 +10,10 @@ The service uses the assignment's MongoDB Atlas database. Public verification
 passed 38 HTTPS requests, including database writes, reference synchronization,
 deletion, and fixture cleanup. Subsequent official self-check results and any
 corrections are recorded in [GRADING.md](GRADING.md). No course form was submitted.
+Latest official self-check: **100/100 (20/20 points)** at 5:45:33 PM CDT,
+October 30, 2026, on correction revision `b13fb95`. Successful DELETE now uses
+empty 204 responses, as clarified by the grader; earlier deployment smoke records
+below describe the preceding release.
 
 The reviewed backend and deployment preparation were committed and pushed to
 `Asuka008/mp3` on `main` as
@@ -136,6 +140,10 @@ MP3-SMOKE fixtures; report that explicitly rather than claiming a clean pass.
   The same smoke command passed **38 requests again**, including cleanup, for
   76 workflow requests across the two verified revisions. Standalone root reads
   are additional checks and are not included in that total.
+- DELETE correction `b13fb95` deployed as `dep-dbihr5uc6qcc73b3vk2g`, Live after
+  37.4 seconds with the same runtime/build/Atlas readiness. Updated public smoke
+  passed 38 requests, including both empty 204 DELETE responses and cleanup,
+  before the official full-credit run. See GRADING.md for exact source and output.
 
 The local regression evidence is in PROGRESS.md and TESTING.md. Public smoke
 coverage is smaller than the 792-request local/Atlas matrix. The actual official

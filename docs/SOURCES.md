@@ -129,6 +129,9 @@ score and verbatim feedback are preserved in GRADING.md. In particular, the
 official DELETE feedback requires an empty 204 success response, superseding
 the previously documented project choice where README/FAQ were silent. No
 additional tutorials or external implementation code were consulted.
+The first actual run scored 90/100; after reproducing/fixing the DELETE response
+contract and verifying the new deployment, the second scored 100/100. Both runs'
+timestamps and graded revisions are recorded, without secrets.
 
 OpenAI Codex was used in this chat to inspect the starter, implement the foundation,
 write the checklist/handoff/setup documents, configure Atlas with user participation,

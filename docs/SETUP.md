@@ -139,4 +139,5 @@ See [API.md](API.md) for all implemented operations and encoded HTTP examples,
 and [DEPLOYMENT.md](DEPLOYMENT.md) for the reviewed Render settings and status.
 The local HTTP/Atlas integration matrix is documented in TESTING.md and
 PROGRESS.md. The Free Render service and public smoke verification are recorded
-in DEPLOYMENT.md. The official course self-check and submission remain separate.
+in DEPLOYMENT.md. The actual official self-check result is in GRADING.md; the
+final course form submission remains separate.

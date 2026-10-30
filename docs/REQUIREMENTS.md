@@ -168,7 +168,8 @@ precedence relative to a missing URL resource.
   preserve `AUTOGRADER_URL` and grading logic.
 - [x] Run the separately authorized `npm run submit` with Node 24. Actual scores,
   feedback, revisions, and timestamps are in [GRADING.md](GRADING.md). This is a
-  self-check and does not submit the course form.
+  self-check and does not submit the course form. Latest result: **100/100,
+  20/20 points**, all items passed after the DELETE 204 correction.
 - [ ] Wake a sleeping Render service before retrying timeouts. Respect the stated
   approximate autograder limit of 5 runs per 2 minutes; fix multiple issues between runs.
 - [ ] Inspect any test data left by failed cleanup; no prescribed initial data
