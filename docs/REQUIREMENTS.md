@@ -167,8 +167,9 @@ precedence relative to a missing URL resource.
 - [ ] Inspect any test data left by failed cleanup; no prescribed initial data
   volume or database wipe is required. Keep the deployment/database available
   during grading.
-- [ ] Use a public GitHub repository under the student's account. Submit through
-  the README's [submission form](https://forms.gle/4V1v2VWU78XwM3H57) by
+- [x] Use a public GitHub repository under the student's account. Verified
+  Asuka008/mp3 and pushed the reviewed assignment to main; see DEPLOYMENT.md.
+- [ ] Submit through the README's [submission form](https://forms.gle/4V1v2VWU78XwM3H57) by
   **Tuesday, November 3, 2026, 11:59 PM Central Time**. Running `submit.js` is only
   a self-check, not submission. No video is required.
 - [ ] Complete the individual assignment without prohibited collaboration or

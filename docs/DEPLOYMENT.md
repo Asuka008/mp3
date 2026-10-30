@@ -4,6 +4,12 @@ Status: local preparation and regression checks are complete. No public service
 or URL has been verified yet. Render account sign-in is required before provider configuration.
 Do not treat the placeholder in submit.js as a deployment.
 
+The reviewed backend and deployment preparation were committed and pushed to
+`Asuka008/mp3` on `main` as
+[`77abe2f`](https://github.com/Asuka008/mp3/commit/77abe2fa832022996e32c43f5218177c47310809).
+Remote main matched the local commit after the normal push. Documentation-only
+follow-up commits may follow; Render should deploy the latest main revision.
+
 ## Reviewed destination and service settings
 
 | Setting | Value |
